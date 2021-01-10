@@ -16,10 +16,11 @@ function Game() {
         {ship:null,attacked:false,hasShip:false,placeable:true};
     }
   }
+  tempState.ships = {count: 5};
   const [gameState, setGameState] = useState(tempState);
   let shipOrientation = "horizontal";
 
-  const placeShip = (gameboard, ship, x, y) => (e) => {
+  const placeShip = (x, y) => (e) => {
     if (shipOrientation === "horizontal") {
         let acc = true;
             for (let i=x; i<=(x+ship.length-1); i++) {
@@ -28,8 +29,10 @@ function Game() {
         if ((x + ship.length - 1 > gameSize) || !(acc)){
             return "unsuccessful";
         } else {
+            let temp = e.dataTransfer.getData("text/plain");
+            gameState.ships[temp] = {health: temp};
             for (let i=x; i<=(x+ship.length-1); i++) {
-                gameState[[i,y]].ship = ship;
+                gameState[[i,y]].ship = gameState.ships[temp];
                 gameState[[i,y]].hasShip = true;
                 gameState[[i,y]].placeable = false;
                 // 8 tiles around are no longer placeable
@@ -41,7 +44,9 @@ function Game() {
                 gameState[[(i+1),(y+1)]].placeable = false;
                 gameState[[i,(y-1)]].placeable = false;
                 gameState[[i,(y+1)]].placeable = false;
+                e.target.style.backgroundColor = 'yellow';
             }
+            setGameState(gameState);
         }
     }
     }
