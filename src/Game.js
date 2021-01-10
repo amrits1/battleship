@@ -9,31 +9,60 @@ function Game() {
       gameArr.push(i);
   }
 
-  for (let x=1; x<=gameSize; x++) {
-    for (let y=1; y<=gameSize; y++) {
+  for (let x=0; x<=(gameSize+1); x++) {
+    for (let y=0; y<=(gameSize+1); y++) {
         let tempArr = [x,y];
         tempState[tempArr]=
         {ship:null,attacked:false,hasShip:false,placeable:true};
     }
   }
   const [gameState, setGameState] = useState(tempState);
-  // use js to build the gameboard display
-  // when a button is pressed, send its coordinates to a function that attacks the ship on the tile if its there
-  // store the coordinates of where ships are in a Gameboard object
-  // if a ship is in the position in the Gameboard, damage the ship and check if its health is now 0
-  // ship is stored in gameboard
   let shipOrientation = "horizontal";
+
+  const placeShip = (gameboard, ship, x, y) => (e) => {
+    if (shipOrientation === "horizontal") {
+        let acc = true;
+            for (let i=x; i<=(x+ship.length-1); i++) {
+                acc = (acc && gameState[[i,y]].placeable)
+            }
+        if ((x + ship.length - 1 > gameSize) || !(acc)){
+            return "unsuccessful";
+        } else {
+            for (let i=x; i<=(x+ship.length-1); i++) {
+                gameState[[i,y]].ship = ship;
+                gameState[[i,y]].hasShip = true;
+                gameState[[i,y]].placeable = false;
+                // 8 tiles around are no longer placeable
+                gameState[[(i-1),y]].placeable = false;
+                gameState[[(i-1),(y-1)]].placeable = false;
+                gameState[[(i-1),(y+1)]].placeable = false;
+                gameState[[(i+1),y]].placeable = false;
+                gameState[[(i+1),(y-1)]].placeable = false;
+                gameState[[(i+1),(y+1)]].placeable = false;
+                gameState[[i,(y-1)]].placeable = false;
+                gameState[[i,(y+1)]].placeable = false;
+            }
+        }
+    }
+    }
   
-  const callBackFuntion = (x, y) => (e) => {
-      console.log(x,y);
-      e.target.style.backgroundColor = 'red';
-      gameState[[x,y]].attacked = true;
-      setGameState(gameState);
+  const attackSquare = (x, y) => (e) => {
+      if (gameState[[x,y]].attacked === true) {
+        return;
+      } else {
+        console.log(x,y);
+        e.target.style.backgroundColor = 'red';
+        gameState[[x,y]].attacked = true;
+        if (gameState[[x,y]].hasShip === true) {
+          gameState[[x,y]].ship.attackShip();
+        }
+        setGameState(gameState);
+      }
   }
   
   return (
     <>
-        <div className="grid-container">{gameArr.map(y => gameArr.map(x => <button onClick={callBackFuntion(x,y)}> {x}, {y}</button>))}</div>
+        <div className="grid-container">{gameArr.map(y => gameArr.map(x => <button onClick={attackSquare(x,y)}> </button>))}</div>
         {/* <button onClick={() => console.log(gameState)}>Hello</button> */}
     </>
   );

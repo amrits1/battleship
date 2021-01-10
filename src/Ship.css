@@ -1,0 +1,11 @@
+.ship2{
+    height: 75px;
+    width: 500px;
+    background-color: powderblue;
+    float: bottom;
+  }
+
+  .ship{
+    background-color: powderblue;
+    float: bottom;
+  }
