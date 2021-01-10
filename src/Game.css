@@ -1,0 +1,23 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(10, auto);
+    grid-template-rows: repeat(10, auto);
+    grid-gap: 0px;
+    background-color: #2196F3;
+    padding: 10px;
+    height: 750px;
+    width: 750px;
+  }
+  
+  .grid-container > button {
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 5px 5px;
+  }
+
+  .grid-container {
+    box-sizing:border-box;
+    padding: 10px;
+    float: left;
+    margin: 20px;
+  }
