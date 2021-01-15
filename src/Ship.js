@@ -4,7 +4,7 @@ import './Ship.css';
 function Ship(props) {
 
 const dragStartHandler = (size) => (e) => {
-  e.dataTransfer.setData("text", size);
+  e.dataTransfer.setData(String(size), size);
   //e.dataTransfer.effectAllowed = "move";
 }
 

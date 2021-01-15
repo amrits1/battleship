@@ -9,8 +9,8 @@ function Game() {
       gameArr.push(i);
   }
 
-  for (let x=0; x<=(gameSize+1); x++) {
-    for (let y=0; y<=(gameSize+1); y++) {
+  for (let x=0; x<=gameSize+1; x++) {
+    for (let y=0; y<=gameSize+1; y++) {
         let tempArr = [x,y];
         tempState[tempArr]=
         {ship:null,attacked:false,hasShip:false,placeable:true,color:"light_blue"};
@@ -22,35 +22,30 @@ function Game() {
 
   const dragOverHandler = (x, y) => (e) => {
     e.preventDefault();
-    if (gameState[[x,y]].placeable) {
-      e.dataTransfer.dropEffect = "move";
-    } else {
+    let temp = parseInt(e.dataTransfer.types[0], 10);
+    console.log(temp);
+    let allowPlacement = (gameState[[x,y]].placeable) && (x + temp - 1 <= gameSize);
+    if (!allowPlacement) {
       e.dataTransfer.dropEffect = "none";
+    } else {
+      if (shipOrientation === "horizontal") {
+        for (let i=x; i<=(x+temp-1); i++) {
+          allowPlacement = allowPlacement && gameState[[i, y]].placeable;
+        }
+      }
+      e.dataTransfer.dropEffect = (allowPlacement ? "move" : "none");
+      //console.log(e.dataTransfer.dropEffect);
     }
   }
 
   const placeShip = (x, y) => (e) => {
     e.preventDefault();
     let gameStateCopy = JSON.parse(JSON.stringify(gameState));
-    let temp = parseInt(e.dataTransfer.getData("text"), 10);
+    let temp = parseInt(e.dataTransfer.types[0], 10);
     if (shipOrientation === "horizontal") {
-        let acc = true;
-        if (x + temp - 1 > gameSize) {
-          acc = false;
-        } else {
-            for (let i=x; i<=(x+temp-1); i++) {
-              // fix this
-                acc = (acc && gameStateCopy[[i,y]].placeable);
-                console.log(gameStateCopy);
-            }
-          }
-        if (!acc) {
-            e.dataTransfer.dropEffect = "none";
-            console.log(gameStateCopy);
-        } else {
             gameStateCopy.ships[temp] = {health: temp};
             for (let i=x; i<=(x+temp-1); i++) {
-                gameStateCopy[[i,y]].ship = gameStateCopy.ships[temp];
+                gameStateCopy[[i,y]].ship = temp;
                 gameStateCopy[[i,y]].hasShip = true;
                 gameStateCopy[[i,y]].placeable = false;
                 // 8 tiles around are no longer placeable
@@ -65,7 +60,6 @@ function Game() {
                 gameStateCopy[[i, y]].color = 'yellow';
             }
             setGameState(gameStateCopy);
-        }
     }
     }
   
@@ -73,14 +67,19 @@ function Game() {
       if (gameState[[x,y]].attacked === true) {
         return;
       } else {
-        console.log(x,y);
-        console.log(gameState);
-        e.target.style.backgroundColor = 'red';
-        gameState[[x,y]].attacked = true;
-        if (gameState[[x,y]].hasShip === true) {
-          gameState[[x,y]].ship.attackShip();
+        let gameStateCopy = JSON.parse(JSON.stringify(gameState));
+        gameStateCopy[[x,y]].color = 'red';
+        gameStateCopy[[x,y]].attacked = true;
+        if (gameStateCopy[[x,y]].hasShip === true) {
+          gameStateCopy.ships[gameStateCopy[[x,y]].ship].health -= 1;
+          if (gameStateCopy.ships[gameStateCopy[[x,y]].ship].health === 0) {
+            gameStateCopy.ships.count -= 1;
+          }
         }
-        setGameState(gameState);
+        console.log(x,y);
+        console.log(gameStateCopy);
+        setGameState(gameStateCopy);
+        // fix ship reference: pass pointers
       }
   }
   
