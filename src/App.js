@@ -10,7 +10,8 @@ function App() {
       <Game />
       <Game />
     </div>
-    <Ship glength={600}/>
+    <Ship glength={6}/>
+    <Ship glength={4}/>
     </>
   );
 }
