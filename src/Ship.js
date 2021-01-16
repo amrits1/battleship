@@ -4,8 +4,7 @@ import './Ship.css';
 function Ship(props) {
 
 const dragStartHandler = (size) => (e) => {
-  e.dataTransfer.setData(String(size), size);
-  //e.dataTransfer.effectAllowed = "move";
+  e.dataTransfer.setData(String(size), props.name);
 }
 
 const dragEndHandler = (e) => {
@@ -15,7 +14,7 @@ const dragEndHandler = (e) => {
 }
 
   return (
-    <div className="ship" draggable="true" onDragEnd={dragEndHandler} onDragStart={dragStartHandler(props.glength)} style={{height: 75, width:(100*props.glength)}}>
+    <div className="ship" draggable="true" onDragEnd={dragEndHandler} onDragStart={dragStartHandler(props.size)} style={{height: 75, width:(100*props.size)}}>
         TEST
     </div>
   );

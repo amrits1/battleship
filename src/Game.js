@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './Game.css';
 
-function Game() {
+function Game(props) {
   const gameSize = 10;
   const tempState = {};
   const gameArr = [];
@@ -23,7 +23,6 @@ function Game() {
   const dragOverHandler = (x, y) => (e) => {
     e.preventDefault();
     let temp = parseInt(e.dataTransfer.types[0], 10);
-    console.log(temp);
     let allowPlacement = (gameState[[x,y]].placeable) && (x + temp - 1 <= gameSize);
     if (!allowPlacement) {
       e.dataTransfer.dropEffect = "none";
@@ -34,7 +33,6 @@ function Game() {
         }
       }
       e.dataTransfer.dropEffect = (allowPlacement ? "move" : "none");
-      //console.log(e.dataTransfer.dropEffect);
     }
   }
 
@@ -42,10 +40,11 @@ function Game() {
     e.preventDefault();
     let gameStateCopy = JSON.parse(JSON.stringify(gameState));
     let temp = parseInt(e.dataTransfer.types[0], 10);
+    let identifier = e.dataTransfer.getData(temp);
     if (shipOrientation === "horizontal") {
-            gameStateCopy.ships[temp] = {health: temp};
+            gameStateCopy.ships[identifier] = {health: temp};
             for (let i=x; i<=(x+temp-1); i++) {
-                gameStateCopy[[i,y]].ship = temp;
+                gameStateCopy[[i,y]].ship = identifier;
                 gameStateCopy[[i,y]].hasShip = true;
                 gameStateCopy[[i,y]].placeable = false;
                 // 8 tiles around are no longer placeable
@@ -63,30 +62,34 @@ function Game() {
     }
     }
   
-  const attackSquare = (x, y) => (e) => {
+  const attackSquare = (x, y) => () => {
       if (gameState[[x,y]].attacked === true) {
         return;
       } else {
         let gameStateCopy = JSON.parse(JSON.stringify(gameState));
-        gameStateCopy[[x,y]].color = 'red';
         gameStateCopy[[x,y]].attacked = true;
         if (gameStateCopy[[x,y]].hasShip === true) {
+          gameStateCopy[[x,y]].color = 'red';
           gameStateCopy.ships[gameStateCopy[[x,y]].ship].health -= 1;
           if (gameStateCopy.ships[gameStateCopy[[x,y]].ship].health === 0) {
             gameStateCopy.ships.count -= 1;
           }
+        } else {
+          gameStateCopy[[x,y]].color = 'blue';
         }
-        console.log(x,y);
+        if (gameStateCopy.ships.count === 0) {
+          props.onLoss();
+        }
         console.log(gameStateCopy);
         setGameState(gameStateCopy);
-        // fix ship reference: pass pointers
       }
   }
   
   return (
     <>
-        <div className="grid-container">{gameArr.map(y => gameArr.map(x => <button style={{background:gameState[[x,y]].color}} onDragOver={dragOverHandler(x, y)} onClick={attackSquare(x,y)} onDrop={placeShip(x,y)}> </button>))}</div>
-        {/* <button onClick={() => console.log(gameState)}>Hello</button> */}
+        <div className="grid-container">
+          {gameArr.map(y => gameArr.map(x => <button style={{background:gameState[[x,y]].color}} disabled={props.isPlayer || props.gameOver} onDragOver={dragOverHandler(x, y)} onClick={attackSquare(x,y)} onDrop={placeShip(x,y)}> </button>))}
+        </div>
     </>
   );
 }
