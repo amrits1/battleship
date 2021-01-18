@@ -5,36 +5,48 @@ import './App.css';
 
 function App() {
   const [gameComplete, setGameComplete] = useState(false);
-  const [headerMsg, setHeaderMsg] = useState("Place Ships");
+  const [playerHeaderMsg, setPlayerHeaderMsg] = useState("Place Ships");
+  const [computerHeaderMsg, setComputerHeaderMsg] = useState("");
 
   const playerLoss = () => {
-    setHeaderMsg("Game Over! Computer wins...");
+    setPlayerHeaderMsg("Game Over! Computer wins...");
+    setComputerHeaderMsg("");
     setGameComplete(true);
   }
   const computerLoss = () => {
-    setHeaderMsg("Game Over! Player wins!");
+    setPlayerHeaderMsg("Game Over! Player wins!");
+    setComputerHeaderMsg("");
     setGameComplete(true);
-    console.log(gameComplete);
   }
 
   return (
     <>
     <h1> Battleship! </h1>
-    <h2> {headerMsg} </h2>
+    <h2> {playerHeaderMsg} </h2>
+    <h2> {computerHeaderMsg} </h2>
     <div className="board">
-      <Game isPlayer={true} onLoss={playerLoss} gameOver={gameComplete}/>
-      <Game isPlayer={false} onLoss={computerLoss} gameOver={gameComplete}/>
+      <Game 
+      isPlayer={true}
+      //interactions between players: 
+      onLoss={playerLoss}
+      gameOver={gameComplete}
+      />
+      <Game 
+      isPlayer={false}
+      //interactions between players: 
+      onLoss={computerLoss} 
+      gameOver={gameComplete}
+      />
     </div>
     <div>
-      <Ship size={5} name={"a"}/>
-      <Ship size={4} name={"b"}/>
-      <Ship size={3} name={"c"}/>
-      <Ship size={3} name={"d"}/>
-      <Ship size={2} name={"e"}/>
+      <Ship size={5} name={"Carrier"}/>
+      <Ship size={4} name={"Battleship"}/>
+      <Ship size={3} name={"Cruiser"}/>
+      <Ship size={3} name={"Submarine"}/>
+      <Ship size={2} name={"Destroyer"}/>
     </div>
     </>
   );
-  //add ship reference attribute
 }
 
 export default App;
