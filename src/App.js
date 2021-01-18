@@ -5,8 +5,9 @@ import "./App.css";
 
 function App() {
   const [gameComplete, setGameComplete] = useState(false);
-  const [playerHeaderMsg, setPlayerHeaderMsg] = useState("Place Ships");
+  const [playerHeaderMsg, setPlayerHeaderMsg] = useState("Place ships on left board");
   const [computerHeaderMsg, setComputerHeaderMsg] = useState("");
+  const [numShipsPlaced, setNumShipsPlaced] = useState(0);
 
   const gameSize = 10;
   const tempState = {};
@@ -108,6 +109,7 @@ function App() {
         <Game
           isPlayer={true}
           //interactions between players:
+          numShipsPlaced={numShipsPlaced}
           onLoss={playerLoss}
           onWin={computerLoss}
           gameOver={gameComplete}
@@ -115,10 +117,12 @@ function App() {
           setPlayerState={setPlayerState}
           compState={compState}
           setCompState={setCompState}
+          setComputerHeaderMsg={setComputerHeaderMsg}
         />
         <Game
           isPlayer={false}
           //interactions between players:
+          numShipsPlaced={numShipsPlaced}
           onLoss={computerLoss}
           onWin={playerLoss}
           gameOver={gameComplete}
@@ -126,14 +130,16 @@ function App() {
           setPlayerState={setPlayerState}
           compState={compState}
           setCompState={setCompState}
+          setPlayerHeaderMsg={setPlayerHeaderMsg}
+          setComputerHeaderMsg={setComputerHeaderMsg}
         />
       </div>
       <div>
-        <Ship size={5} name={"Carrier"} />
-        <Ship size={4} name={"Battleship"} />
-        <Ship size={3} name={"Cruiser"} />
-        <Ship size={3} name={"Submarine"} />
-        <Ship size={2} name={"Destroyer"} />
+        <Ship size={5} shipPlaced={() => setNumShipsPlaced(numShipsPlaced+1)} name={"Carrier"} />
+        <Ship size={4} shipPlaced={() => setNumShipsPlaced(numShipsPlaced+1)} name={"Battleship"} />
+        <Ship size={3} shipPlaced={() => setNumShipsPlaced(numShipsPlaced+1)} name={"Cruiser"} />
+        <Ship size={3} shipPlaced={() => setNumShipsPlaced(numShipsPlaced+1)} name={"Submarine"} />
+        <Ship size={2} shipPlaced={() => setNumShipsPlaced(numShipsPlaced+1)} name={"Destroyer"} />
       </div>
     </>
   );

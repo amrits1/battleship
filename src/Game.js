@@ -23,11 +23,14 @@ function Game(props) {
       if (gameStateCopy[[x, y]].hasShip === true) {
         gameStateCopy[[x, y]].color = "red";
         gameStateCopy.ships[gameStateCopy[[x, y]].ship].health -= 1;
+        props.setPlayerHeaderMsg("Player: Hit!");
         if (gameStateCopy.ships[gameStateCopy[[x, y]].ship].health === 0) {
           gameStateCopy.ships.count -= 1;
+          props.setPlayerHeaderMsg("Player: Sink!");
         }
       } else {
         gameStateCopy[[x, y]].color = "blue";
+        props.setPlayerHeaderMsg("Player: Miss!");
       }
       if (gameStateCopy.ships.count === 0) {
         props.onLoss();
@@ -47,6 +50,7 @@ function Game(props) {
               playerStateCopy[[xRandom, yRandom]].attacked = true;
               if (playerStateCopy[[xRandom, yRandom]].hasShip === true) {
                 playerStateCopy[[xRandom, yRandom]].color = "red";
+                props.setComputerHeaderMsg("Computer: Hit!");
                 playerStateCopy.ships[
                   playerStateCopy[[xRandom, yRandom]].ship
                 ].health -= 1;
@@ -56,9 +60,11 @@ function Game(props) {
                   ].health === 0
                 ) {
                   playerStateCopy.ships.count -= 1;
+                  props.setComputerHeaderMsg("Computer: Sink!");
                 }
               } else {
                 playerStateCopy[[xRandom, yRandom]].color = "blue";
+                props.setComputerHeaderMsg("Computer: Miss!");
               }
               props.setPlayerState(playerStateCopy);
               if (playerStateCopy.ships.count === 0) {
@@ -126,7 +132,7 @@ function Game(props) {
             <button
               key={[x, y].toString()}
               style={{ background: gameState[[x, y]].color }}
-              disabled={props.isPlayer || props.gameOver}
+              disabled={props.isPlayer || props.gameOver || !(props.numShipsPlaced === 5)}
               onDragOver={dragOverHandler(x, y)}
               onClick={attackSquare(x, y)}
               onDrop={placeShip(x, y)}

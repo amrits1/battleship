@@ -6,6 +6,6 @@
   }
 
   .ship{
+    border-radius: 25px;
     background-color: powderblue;
-    float: bottom;
   }
